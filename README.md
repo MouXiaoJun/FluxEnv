@@ -70,9 +70,11 @@ The desktop app uses [Tauri Updater](https://v2.tauri.app/plugin/updater/) with 
    Store the **private** key only in CI: GitHub repository secret `TAURI_SIGNING_PRIVATE_KEY` (file contents). Optional: `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` if you set a password.
 
 2. **Update endpoint**  
-   In `tauri.conf.json`, replace `OWNER/REPO` in `plugins.updater.endpoints` with your real GitHub `owner/repo`. The client fetches:
+   `plugins.updater.endpoints` in `tauri.conf.json` points at this repo’s `latest.json`:
 
-   `https://github.com/OWNER/REPO/releases/latest/download/latest.json`
+   `https://github.com/MouXiaoJun/FluxEnv/releases/latest/download/latest.json`
+
+   If you fork the project, change the URL to your `owner/repo`.
 
 3. **CI permissions**  
    In the GitHub repo: **Settings → Actions → General → Workflow permissions** → enable **Read and write** for `GITHUB_TOKEN` (needed to create releases).
