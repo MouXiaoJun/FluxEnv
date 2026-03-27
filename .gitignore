@@ -1,0 +1,25 @@
+# Tauri updater signing — never commit the private key
+.tauri/*.key
+!.tauri/*.key.pub
+
+# Dependencies & build output
+node_modules/
+**/node_modules/
+dist/
+target/
+apps/desktop/src-tauri/gen/
+.DS_Store
+*.log
+
+# Local env (never push secrets)
+.env
+.env.*
+!.env.example
+
+# Editor / local tooling
+.cursor/
+.shared/
+
+# Python
+__pycache__/
+*.py[cod]

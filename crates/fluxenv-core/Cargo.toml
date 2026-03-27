@@ -1,0 +1,7 @@
+[package]
+name = "fluxenv-core"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+fluxenv-models = { path = "../fluxenv-models" }

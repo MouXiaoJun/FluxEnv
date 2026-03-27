@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- FluxEnv: env layers + active profile dot. Blue gradient matches UI accent. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="FluxEnv">
+  <defs>
+    <linearGradient id="fx-bg" x1="96" y1="64" x2="928" y2="960" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1e40af"/>
+      <stop offset="0.55" stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+  <!-- Squircle-ish tile -->
+  <rect x="32" y="32" width="960" height="960" rx="216" ry="216" fill="url(#fx-bg)"/>
+  <!-- Inner vignette for depth (subtle) -->
+  <rect x="32" y="32" width="960" height="960" rx="216" ry="216" fill="none" stroke="#000" stroke-opacity="0.12" stroke-width="2"/>
+  <!-- Env lines (read well at 32px) -->
+  <rect x="200" y="316" width="340" height="72" rx="36" fill="#ffffff"/>
+  <rect x="200" y="428" width="480" height="72" rx="36" fill="#ffffff" opacity="0.94"/>
+  <rect x="200" y="540" width="260" height="72" rx="36" fill="#ffffff" opacity="0.88"/>
+  <!-- Active profile / focus -->
+  <circle cx="748" cy="464" r="56" fill="#ffffff"/>
+  <circle cx="748" cy="464" r="72" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="16"/>
+</svg>

@@ -1,0 +1,7 @@
+[workspace]
+members = [
+  "crates/fluxenv-core",
+  "crates/fluxenv-models",
+]
+exclude = ["apps/desktop/src-tauri"]
+resolver = "2"

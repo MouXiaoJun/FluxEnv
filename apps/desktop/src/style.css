@@ -1,0 +1,327 @@
+:root {
+  /* 亮色：白底 + 中性灰 + 蓝强调；暗色见下方 media，为柔和中性灰（非深蓝 OLED） */
+  color-scheme: light dark;
+
+  --fx-bg: #ffffff;
+  --fx-surface: #fafafa;
+  --fx-surface-hover: #f5f5f5;
+  --fx-primary: #171717;
+  --fx-secondary: #737373;
+  --fx-muted: #a3a3a3;
+  --fx-border: #e8e8e8;
+  --fx-border-strong: #d4d4d4;
+
+  --fx-accent: #2563eb;
+  --fx-accent-hover: #1d4ed8;
+  --fx-on-accent: #ffffff;
+
+  --fx-success: #15803d;
+  --fx-success-soft: #f0fdf4;
+  --fx-danger: #dc2626;
+  --fx-danger-soft: #fef2f2;
+  --fx-warning: #d97706;
+
+  --fx-focus-ring: rgba(37, 99, 235, 0.22);
+  --fx-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+  --fx-cta: var(--fx-accent);
+  --fx-sec-primary: var(--fx-accent);
+  --fx-sec-secondary: var(--fx-success);
+  --fx-sec-cta: var(--fx-accent);
+  --fx-sec-soft: var(--fx-success-soft);
+  --fx-text: var(--fx-primary);
+}
+
+/* 随系统：柔和暗色（锌灰系），避免午夜蓝 / 高对比「程序员黑」 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fx-bg: #171717;
+    --fx-surface: #262626;
+    --fx-surface-hover: #2e2e2e;
+    --fx-primary: #fafafa;
+    --fx-secondary: #a3a3a3;
+    --fx-muted: #737373;
+    --fx-border: #404040;
+    --fx-border-strong: #525252;
+
+    --fx-accent: #3b82f6;
+    --fx-accent-hover: #60a5fa;
+    --fx-on-accent: #fafafa;
+
+    --fx-success: #4ade80;
+    --fx-success-soft: rgba(74, 222, 128, 0.12);
+    --fx-danger: #f87171;
+    --fx-danger-soft: rgba(248, 113, 113, 0.12);
+    --fx-warning: #fbbf24;
+
+    --fx-focus-ring: rgba(96, 165, 250, 0.35);
+    /* 暗色靠边框分层，不用重阴影 */
+    --fx-card-shadow: none;
+    --fx-text: var(--fx-primary);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: var(--fx-bg);
+  color: var(--fx-text);
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+.app {
+  width: 100vw;
+  height: 100vh;
+  text-align: left;
+  padding: 12px;
+  background: var(--fx-bg);
+}
+
+.card {
+  width: 100%;
+  height: calc(100vh - 24px);
+  overflow: auto;
+  border: 1px solid var(--fx-border);
+  border-radius: 12px;
+  background: var(--fx-bg);
+  padding: 20px 20px 16px;
+  box-shadow: var(--fx-card-shadow);
+}
+
+.toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.brand-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 9px;
+  flex-shrink: 0;
+  border: 1px solid var(--fx-border);
+}
+
+.lang-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--fx-secondary);
+}
+
+.title {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--fx-primary);
+}
+
+.muted {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--fx-secondary);
+}
+
+.actions {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.provider-create {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+}
+
+.provider-input {
+  flex: 1;
+  min-width: 0;
+  border-radius: 8px;
+  border: 1px solid var(--fx-border);
+  background: var(--fx-bg);
+  color: var(--fx-primary);
+  padding: 8px 12px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.provider-input::placeholder {
+  color: var(--fx-muted);
+}
+
+.provider-input:focus {
+  border-color: var(--fx-accent);
+  box-shadow: 0 0 0 3px var(--fx-focus-ring);
+}
+
+.provider-list {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.provider-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--fx-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: var(--fx-surface);
+  transition: background-color 0.15s ease;
+}
+
+.provider-row:hover {
+  background: var(--fx-surface-hover);
+}
+
+.provider-editor {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 8px;
+}
+
+.provider-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.provider-tag {
+  font-size: 11px;
+  border: 1px solid var(--fx-border);
+  border-radius: 999px;
+  padding: 2px 8px;
+  color: var(--fx-secondary);
+  background: var(--fx-bg);
+}
+
+.secret-badge {
+  font-size: 11px;
+  border-radius: 6px;
+  padding: 2px 8px;
+  color: var(--fx-accent, #3d8b6a);
+  background: color-mix(in srgb, var(--fx-accent, #3d8b6a) 12%, transparent);
+}
+
+.provider-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.provider-key {
+  font-size: 11px;
+  color: var(--fx-secondary);
+  border: 1px solid var(--fx-border);
+  border-radius: 6px;
+  padding: 2px 8px;
+  background: var(--fx-bg);
+}
+
+.provider-on {
+  color: var(--fx-success);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.provider-off {
+  color: var(--fx-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.btn {
+  border-radius: 8px;
+  border: 1px solid var(--fx-border);
+  background: var(--fx-bg);
+  color: var(--fx-primary);
+  padding: 8px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--fx-surface);
+  border-color: var(--fx-border-strong);
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--fx-focus-ring);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  border-color: transparent;
+  background: var(--fx-accent);
+  color: var(--fx-on-accent);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--fx-accent-hover);
+  border-color: transparent;
+}
+
+/* 次要操作：线框 + 浅底，避免第二块高饱和色 */
+.btn-security {
+  background: var(--fx-bg);
+  color: var(--fx-primary);
+  border-color: var(--fx-border-strong);
+}
+
+.btn-security:hover:not(:disabled) {
+  background: var(--fx-surface);
+}
+
+.btn-danger {
+  color: var(--fx-danger);
+  border-color: color-mix(in srgb, var(--fx-danger) 35%, var(--fx-border));
+  background: var(--fx-bg);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--fx-danger-soft);
+  border-color: color-mix(in srgb, var(--fx-danger) 45%, var(--fx-border));
+}
+
+.status {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--fx-border);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--fx-secondary);
+}
