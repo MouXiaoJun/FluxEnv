@@ -30,34 +30,36 @@
   --fx-sec-cta: var(--fx-accent);
   --fx-sec-soft: var(--fx-success-soft);
   --fx-text: var(--fx-primary);
+  --fx-card-bg: var(--fx-bg);
 }
 
-/* 随系统：柔和暗色（锌灰系），避免午夜蓝 / 高对比「程序员黑」 */
+/* 深色：蓝灰层次 + 半透明描边，避免纯灰「水泥感」与高饱和霓虹 */
 @media (prefers-color-scheme: dark) {
   :root {
-    --fx-bg: #171717;
-    --fx-surface: #262626;
-    --fx-surface-hover: #2e2e2e;
-    --fx-primary: #fafafa;
-    --fx-secondary: #a3a3a3;
-    --fx-muted: #737373;
-    --fx-border: #404040;
-    --fx-border-strong: #525252;
+    --fx-bg: #0c0d10;
+    --fx-card-bg: #13141a;
+    --fx-surface: #1a1b23;
+    --fx-surface-hover: #22232e;
+    --fx-primary: #ececf1;
+    --fx-secondary: #9a9aaa;
+    --fx-muted: #656575;
+    --fx-border: rgba(255, 255, 255, 0.09);
+    --fx-border-strong: rgba(255, 255, 255, 0.15);
 
-    --fx-accent: #3b82f6;
-    --fx-accent-hover: #60a5fa;
-    --fx-on-accent: #fafafa;
+    --fx-accent: #6b9ef5;
+    --fx-accent-hover: #8cb4f8;
+    --fx-on-accent: #0c0d10;
 
-    --fx-success: #4ade80;
-    --fx-success-soft: rgba(74, 222, 128, 0.12);
-    --fx-danger: #f87171;
-    --fx-danger-soft: rgba(248, 113, 113, 0.12);
-    --fx-warning: #fbbf24;
+    --fx-success: #7dd3a8;
+    --fx-success-soft: rgba(125, 211, 168, 0.14);
+    --fx-danger: #e8a0a0;
+    --fx-danger-soft: rgba(232, 160, 160, 0.12);
+    --fx-warning: #e8c06a;
 
-    --fx-focus-ring: rgba(96, 165, 250, 0.35);
-    /* 暗色靠边框分层，不用重阴影 */
-    --fx-card-shadow: none;
+    --fx-focus-ring: rgba(107, 158, 245, 0.35);
+    --fx-card-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
     --fx-text: var(--fx-primary);
+    --fx-input-bg: #101118;
   }
 }
 
@@ -92,7 +94,7 @@ body {
   overflow: auto;
   border: 1px solid var(--fx-border);
   border-radius: 12px;
-  background: var(--fx-bg);
+  background: var(--fx-card-bg);
   padding: 20px 20px 16px;
   box-shadow: var(--fx-card-shadow);
 }
@@ -160,7 +162,7 @@ body {
   min-width: 0;
   border-radius: 8px;
   border: 1px solid var(--fx-border);
-  background: var(--fx-bg);
+  background: var(--fx-input-bg, var(--fx-bg));
   color: var(--fx-primary);
   padding: 8px 12px;
   font-size: 14px;
