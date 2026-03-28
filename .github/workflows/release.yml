@@ -1,9 +1,8 @@
 # Build and publish desktop installers + updater artifacts (latest.json) to GitHub Releases.
 # Prerequisites:
-# 1. Replace OWNER/REPO in apps/desktop/src-tauri/tauri.conf.json → plugins.updater.endpoints
-# 2. Repository secret: TAURI_SIGNING_PRIVATE_KEY = full content of your minisign private key file
+# 1. Repository secret: TAURI_SIGNING_PRIVATE_KEY = full content of your minisign private key file
 #    (same key whose public half is in tauri.conf.json → plugins.updater.pubkey)
-# 3. GitHub Actions workflow permissions: Settings → Actions → Workflow permissions → Read and write
+# 2. GitHub Actions workflow permissions: Settings → Actions → Workflow permissions → Read and write
 
 name: Release desktop
 

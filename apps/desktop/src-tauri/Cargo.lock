@@ -798,14 +798,14 @@ dependencies = [
 
 [[package]]
 name = "fluxenv-core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "fluxenv-models",
 ]
 
 [[package]]
 name = "fluxenv-desktop"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "fluxenv-core",
  "fluxenv-models",
@@ -820,7 +820,7 @@ dependencies = [
 
 [[package]]
 name = "fluxenv-models"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde",
 ]
