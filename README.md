@@ -1,5 +1,7 @@
 # FluxEnv
 
+[![CI](https://github.com/MouXiaoJun/FluxEnv/actions/workflows/ci.yml/badge.svg)](https://github.com/MouXiaoJun/FluxEnv/actions/workflows/ci.yml)
+
 ![FluxEnv app icon](apps/desktop/src-tauri/icons/source/fluxenv-icon.svg)
 
 FluxEnv is a cross-platform desktop tool for managing and switching project environments.
@@ -11,7 +13,7 @@ It focuses on:
 
 ## Project Status
 
-This project is in early setup stage.
+This project is in early setup stage. **CI** runs on every push/PR to `main` (`cargo test`, Vite build, `cargo check` for the desktop app).
 
 ## Goals (MVP)
 
