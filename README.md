@@ -67,7 +67,8 @@ The desktop app uses [Tauri Updater](https://v2.tauri.app/plugin/updater/) with 
    ```
 
    Copy `~/.tauri/fluxenv.key.pub` content into `pubkey` in `tauri.conf.json`.  
-   Store the **private** key only in CI: GitHub repository secret `TAURI_SIGNING_PRIVATE_KEY` (file contents). Optional: `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` if you set a password.
+   Store the **private** key only in CI: GitHub repository secret `TAURI_SIGNING_PRIVATE_KEY` must be the **entire** contents of `fluxenv.key` (the private file), including the first line that starts with `untrusted comment:`. If you paste only the base64 lines without that header, CI fails with `Missing comment in secret key`.  
+   Optional: `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` only if you used `-p` with a non-empty password when generating the key; if you used `-p ""`, leave this secret **unset**.
 
 2. **Update endpoint**  
    `plugins.updater.endpoints` in `tauri.conf.json` points at this repo’s `latest.json`:
@@ -86,3 +87,8 @@ The desktop app uses [Tauri Updater](https://v2.tauri.app/plugin/updater/) with 
 3. Workflow **Release desktop** (`.github/workflows/release.yml`) builds on macOS (x64 + arm64), Linux, Windows, signs artifacts, and uploads a **draft** release. Review and publish the release on GitHub.
 
 After publish, the in-app **Check for updates** button will find updates when `latest.json` on the release matches the configured endpoint and version is newer than the running app.
+
+### Troubleshooting: release workflow fails on signing
+
+- **`Missing comment in secret key`** — `TAURI_SIGNING_PRIVATE_KEY` is not the full private key file; re-copy the whole `*.key` file from your machine (with the `untrusted comment:` line).  
+- **`incorrect ... password`** — Key was created with a passphrase; set `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` in repo secrets to match, or regenerate with `-p ""` and update both `pubkey` in `tauri.conf.json` and the GitHub secret.
