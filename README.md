@@ -86,7 +86,7 @@ The desktop app uses [Tauri Updater](https://v2.tauri.app/plugin/updater/) with 
 
 1. Bump `version` in `apps/desktop/src-tauri/tauri.conf.json` (and `package.json` / `Cargo.toml` if you keep them in sync).
 2. Commit and push a tag: `git tag v0.1.0 && git push origin v0.1.0`.
-3. Workflow **Release desktop** (`.github/workflows/release.yml`) builds on macOS (x64 + arm64), Linux, Windows, signs artifacts, and uploads a **draft** release. Review and publish the release on GitHub.
+3. Workflow **Release desktop** (`.github/workflows/release.yml`) builds on macOS (x64 + arm64), Linux, Windows, signs artifacts, and **publishes** the GitHub Release (so `latest.json` is available for in-app updates without a manual publish step).
 
 After publish, the in-app **Check for updates** button will find updates when `latest.json` on the release matches the configured endpoint and version is newer than the running app.
 
