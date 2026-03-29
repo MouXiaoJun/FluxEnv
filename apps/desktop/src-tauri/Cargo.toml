@@ -15,6 +15,7 @@ serde_json = "1"
 fluxenv-core = { path = "../../../crates/fluxenv-core" }
 fluxenv-models = { path = "../../../crates/fluxenv-models" }
 keyring = "3"
+directories = "5"
 
 [features]
 default = []

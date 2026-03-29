@@ -103,6 +103,20 @@ const i18n: Record<Lang, Record<string, string>> = {
   }
 };
 
+const BROWSER_FALLBACK_PROVIDERS: ProviderItem[] = [
+  { name: "openai", envKey: "OPENAI_API_KEY", envValue: "", enabled: false, builtin: true },
+  { name: "anthropic", envKey: "ANTHROPIC_API_KEY", envValue: "", enabled: false, builtin: true },
+  { name: "deepseek", envKey: "DEEPSEEK_API_KEY", envValue: "", enabled: false, builtin: true },
+  { name: "openrouter", envKey: "OPENROUTER_API_KEY", envValue: "", enabled: false, builtin: true }
+];
+
+type ProviderRowDto = {
+  name: string;
+  env_key: string;
+  enabled: boolean;
+  builtin: boolean;
+};
+
 function App() {
   const defaultLang: Lang =
     typeof navigator !== "undefined" && navigator.language.toLowerCase().startsWith("zh")
@@ -112,12 +126,7 @@ function App() {
   const t = (key: string) => i18n[lang][key] ?? key;
 
   const [status, setStatus] = useState(t("statusReady"));
-  const [providers, setProviders] = useState<ProviderItem[]>([
-    { name: "openai", envKey: "OPENAI_API_KEY", envValue: "", enabled: false, builtin: true },
-    { name: "anthropic", envKey: "ANTHROPIC_API_KEY", envValue: "", enabled: false, builtin: true },
-    { name: "deepseek", envKey: "DEEPSEEK_API_KEY", envValue: "", enabled: false, builtin: true },
-    { name: "openrouter", envKey: "OPENROUTER_API_KEY", envValue: "", enabled: false, builtin: true }
-  ]);
+  const [providers, setProviders] = useState<ProviderItem[]>([]);
   const [draftName, setDraftName] = useState("");
   const [editingName, setEditingName] = useState<string | null>(null);
   const [editingDraft, setEditingDraft] = useState<EditingDraft>({
@@ -158,6 +167,30 @@ function App() {
   useEffect(() => {
     void refreshSecretFlags(providers);
   }, [providers, refreshSecretFlags]);
+
+  useEffect(() => {
+    if (!invoke) {
+      setProviders(BROWSER_FALLBACK_PROVIDERS);
+      return;
+    }
+    void (async () => {
+      try {
+        const rows = (await invoke("list_providers")) as ProviderRowDto[];
+        setProviders(
+          rows.map((r) => ({
+            name: r.name,
+            envKey: r.env_key,
+            envValue: "",
+            enabled: r.enabled,
+            builtin: r.builtin
+          }))
+        );
+      } catch (error) {
+        setStatus(`${t("runFailed")}: ${String(error)}`);
+        setProviders(BROWSER_FALLBACK_PROVIDERS);
+      }
+    })();
+  }, [invoke, t]);
 
   const handleRunClick = async () => {
     if (!invoke) {

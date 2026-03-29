@@ -1,59 +1,38 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod secret_store;
+mod state_store;
 
+use std::path::PathBuf;
 use std::sync::Mutex;
 
 use fluxenv_core::{build_effective_session_env, set_provider_enabled};
 use fluxenv_models::{EnvVariable, Profile, ProviderConfig};
+use serde::Serialize;
+use tauri::Manager;
 
 struct AppState {
     providers: Mutex<Vec<ProviderConfig>>,
+    data_dir: PathBuf,
 }
 
-impl Default for AppState {
-    fn default() -> Self {
-        Self {
-            providers: Mutex::new(vec![
-                ProviderConfig {
-                    name: "openai".to_string(),
-                    enabled: false,
-                    variables: vec![EnvVariable {
-                        key: "OPENAI_API_KEY".to_string(),
-                        value: String::new(),
-                        is_secret: true,
-                    }],
-                },
-                ProviderConfig {
-                    name: "anthropic".to_string(),
-                    enabled: false,
-                    variables: vec![EnvVariable {
-                        key: "ANTHROPIC_API_KEY".to_string(),
-                        value: String::new(),
-                        is_secret: true,
-                    }],
-                },
-                ProviderConfig {
-                    name: "deepseek".to_string(),
-                    enabled: false,
-                    variables: vec![EnvVariable {
-                        key: "DEEPSEEK_API_KEY".to_string(),
-                        value: String::new(),
-                        is_secret: true,
-                    }],
-                },
-                ProviderConfig {
-                    name: "openrouter".to_string(),
-                    enabled: false,
-                    variables: vec![EnvVariable {
-                        key: "OPENROUTER_API_KEY".to_string(),
-                        value: String::new(),
-                        is_secret: true,
-                    }],
-                },
-            ]),
-        }
+impl AppState {
+    fn save_providers(&self) -> Result<(), String> {
+        let list = self
+            .providers
+            .lock()
+            .map_err(|_| "Provider state is unavailable.".to_string())?
+            .clone();
+        state_store::save(&self.data_dir, &list)
     }
+}
+
+#[derive(Debug, Serialize)]
+struct ProviderRow {
+    name: String,
+    env_key: String,
+    enabled: bool,
+    builtin: bool,
 }
 
 /// Clone providers and fill secret values from the OS store for merging (never persist plaintext in state).
@@ -115,7 +94,32 @@ fn mask_value(value: &str) -> String {
 }
 
 #[tauri::command]
-fn run_with_selected_profile(profile: String, state: tauri::State<AppState>) -> String {
+fn list_providers(state: tauri::State<'_, AppState>) -> Result<Vec<ProviderRow>, String> {
+    let providers = state
+        .providers
+        .lock()
+        .map_err(|_| "Provider state is unavailable.".to_string())?;
+    let rows = providers
+        .iter()
+        .map(|p| {
+            let env_key = p
+                .variables
+                .first()
+                .map(|v| v.key.clone())
+                .unwrap_or_default();
+            ProviderRow {
+                name: p.name.clone(),
+                env_key,
+                enabled: p.enabled,
+                builtin: state_store::is_builtin_name(&p.name),
+            }
+        })
+        .collect();
+    Ok(rows)
+}
+
+#[tauri::command]
+fn run_with_selected_profile(profile: String, state: tauri::State<'_, AppState>) -> String {
     let system_env: Vec<EnvVariable> = std::env::vars()
         .map(|(key, value)| EnvVariable {
             is_secret: looks_like_secret(&key),
@@ -157,13 +161,17 @@ fn run_with_selected_profile(profile: String, state: tauri::State<AppState>) -> 
 fn toggle_provider(
     provider_name: String,
     enabled: bool,
-    state: tauri::State<AppState>,
+    state: tauri::State<'_, AppState>,
 ) -> String {
     let mut providers = match state.providers.lock() {
         Ok(guard) => guard,
         Err(_) => return "Provider state is unavailable.".to_string(),
     };
     if set_provider_enabled(&mut providers, &provider_name, enabled) {
+        drop(providers);
+        if let Err(e) = state.save_providers() {
+            return format!("Provider '{}' toggled but persist failed: {}.", provider_name, e);
+        }
         return format!(
             "Provider '{}' is now {}.",
             provider_name,
@@ -198,7 +206,7 @@ fn upsert_provider(
     env_value: String,
     enabled: bool,
     write_secret: bool,
-    state: tauri::State<AppState>,
+    state: tauri::State<'_, AppState>,
 ) -> Result<String, String> {
     let mut providers = state
         .providers
@@ -250,12 +258,17 @@ fn upsert_provider(
     } else {
         providers.push(cfg);
     }
+    drop(providers);
+
+    state
+        .save_providers()
+        .map_err(|e| format!("Synced in memory but persist failed: {}", e))?;
 
     Ok(format!("Synced provider '{}'.", name))
 }
 
 #[tauri::command]
-fn remove_provider(name: String, state: tauri::State<AppState>) -> Result<String, String> {
+fn remove_provider(name: String, state: tauri::State<'_, AppState>) -> Result<String, String> {
     let mut providers = state
         .providers
         .lock()
@@ -267,6 +280,10 @@ fn remove_provider(name: String, state: tauri::State<AppState>) -> Result<String
         if let Some(p) = removed {
             delete_provider_secrets(&p);
         }
+        drop(providers);
+        state
+            .save_providers()
+            .map_err(|e| format!("Removed but persist failed: {}", e))?;
         Ok(format!("Removed '{}'.", name))
     } else {
         Err(format!("Provider '{}' was not found.", name))
@@ -277,8 +294,19 @@ fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
-        .manage(AppState::default())
+        .setup(|app| {
+            let dirs = directories::ProjectDirs::from("com", "fluxenv", "FluxEnv")
+                .expect("fluxenv: could not resolve app data directory (no home dir?)");
+            let data_dir = dirs.data_dir().to_path_buf();
+            let providers = state_store::load_or_init(&data_dir);
+            app.manage(AppState {
+                providers: Mutex::new(providers),
+                data_dir,
+            });
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
+            list_providers,
             run_with_selected_profile,
             toggle_provider,
             upsert_provider,

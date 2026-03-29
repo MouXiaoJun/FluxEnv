@@ -55,6 +55,8 @@ docs/
 
 The Tauri app stores provider API keys in the **OS credential store** (macOS Keychain, Windows Credential Manager, Linux Secret Service) via the Rust [`keyring`](https://crates.io/crates/keyring) crate and service name `com.fluxenv.desktop` (same as `identifier` in `tauri.conf.json`). In-memory `ProviderConfig` keeps **empty** values for secrets; plaintext is only read from the keychain when building the effective environment (e.g. preview). Use **Clear secret** in the UI to remove a stored entry.
 
+Provider **metadata** (names, env key names, enabled flags) is persisted as JSON under the OS app data directory (via [`directories`](https://crates.io/crates/directories) / `ProjectDirs`: e.g. macOS `~/Library/Application Support/com.fluxenv.FluxEnv/providers_state.json`). Secrets are **not** written to that file.
+
 ## Auto-update (GitHub Releases)
 
 The desktop app uses [Tauri Updater](https://v2.tauri.app/plugin/updater/) with artifacts published to **GitHub Releases**.
